@@ -294,11 +294,11 @@ int main() {
 	shader->Link();  
 
 	glm::vec3 lightPos = glm::vec3(0.0f, 3.0f, 3.0f);
-	glm::vec3 lightCol = glm::vec3(0.9f, 0.85f, 0.5f);
+	glm::vec3 lightCol = glm::vec3(1.0f);
 	float     lightAmbientPow = 0.05f;
 	float     lightSpecularPow = 1.0f;
 	glm::vec3 ambientCol = glm::vec3(1.0f);
-	float     ambientPow = 0.1f;
+	float     ambientPow = 0.5f;
 	float     shininess = 4.0f;
 	float     lightLinearFalloff = 0.09f;
 	float     lightQuadraticFalloff = 0.032f;
