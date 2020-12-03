@@ -96,7 +96,7 @@ bool initGLFW() {
 #endif
 	
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "100590205 - Joseph Di Lisi", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback
@@ -335,8 +335,8 @@ int main() {
 		Texture2D::sptr specular = Texture2D::LoadFromFile("images/Stone_001_Specular.png"); 
 
 		// Load the cube map
-		//TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/sample.jpg");
-		TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/ocean.jpg"); 
+		TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/sample.jpg");
+		//TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/ocean.jpg"); 
 
 		// Creating an empty texture
 		Texture2DDescription desc = Texture2DDescription();
@@ -372,9 +372,6 @@ int main() {
 		material0->Set("s_Specular", specular);
 		material0->Set("u_Shininess", 8.0f);
 		material0->Set("u_TextureMix", 0.5f); 
-		material0->Set("s_Environment", environmentMap);
-		material0->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f),
-			glm::vec3(1, 0, 0))));
 
 		// Load a second material for our reflective material!
 		Shader::sptr reflectiveShader = Shader::Create();
@@ -384,10 +381,8 @@ int main() {
 		
 		ShaderMaterial::sptr reflectiveMat = ShaderMaterial::Create();
 		reflectiveMat->Shader = reflectiveShader;
-		reflectiveMat->Set("s_Environment", environmentMap);	
-		// TODO: send the rotation to apply to the skybox////////////
-		reflectiveMat->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f),
-			glm::vec3(1, 0, 0))));
+		reflectiveMat->Set("s_Environment", environmentMap);
+		// TODO: send the rotation to apply to the skybox
 
 		GameObject sceneObj = scene->CreateEntity("scene_geo");
 		{
@@ -474,9 +469,6 @@ int main() {
 			skyboxMat->Shader = skybox;  
 			skyboxMat->Set("s_Environment", environmentMap);
 			// TODO: send the rotation to apply to the skybox
-			skyboxMat->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f),
-				glm::vec3(1, 0, 0))));
-
 			skyboxMat->RenderLayer = 100;
 
 			MeshBuilder<VertexPosNormTexCol> mesh;
@@ -488,7 +480,7 @@ int main() {
 			skyboxObj.get<Transform>().SetLocalPosition(0.0f, 0.0f, 0.0f);
 			skyboxObj.get_or_emplace<RendererComponent>().SetMesh(meshVao).SetMaterial(skyboxMat);
 		}
-		/////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////
 
 		// We'll use a vector to store all our key press events for now (this should probably be a behaviour eventually)
 		std::vector<KeyPressWatcher> keyToggles;

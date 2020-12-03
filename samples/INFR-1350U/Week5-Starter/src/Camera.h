@@ -78,8 +78,6 @@ public:
 	/// </summary>
 	const glm::mat4& GetViewProjection() const;
 
-	void toggleProj();
-
 protected:
 	float _nearPlane;
 	float _farPlane;
@@ -92,8 +90,6 @@ protected:
 
 	glm::mat4 _view;
 	glm::mat4 _projection;
-
-	bool perspective = true;
 
 	// The view projection, it is mutable so we can re-calculate it during const methods
 	mutable glm::mat4 _viewProjection;

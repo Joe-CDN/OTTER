@@ -60,17 +60,8 @@ const glm::mat4& Camera::GetViewProjection() const {
 	return _viewProjection;
 }
 
-void Camera::toggleProj()
-{
-	perspective = !perspective;
-	__CalculateProjection();
-}
-
 void Camera::__CalculateProjection() {
-	if(perspective)
-		_projection = glm::perspective(_fovRadians, _aspectRatio, _nearPlane, _farPlane);
-	else
-		_projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 100.0f);
+	_projection = glm::perspective(_fovRadians, _aspectRatio, _nearPlane, _farPlane);
 	_isDirty = true;
 }
 

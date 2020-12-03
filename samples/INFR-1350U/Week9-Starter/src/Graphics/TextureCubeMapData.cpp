@@ -20,18 +20,7 @@ TextureCubeMapData::~TextureCubeMapData() {
 
 TextureCubeMapData::sptr TextureCubeMapData::CreateFromImages(const std::vector<Texture2DData::sptr>& images)
 {
-	LOG_ASSERT(images.size() == 6, "Must pass in exactly 6 images!");
-	// We'll grab our settings from the first image and assume that they're the same everywhere
-	uint32_t size = images[0]->GetWidth();
-	PixelFormat format = images[0]->GetFormat();
-	PixelType type = images[0]->GetPixelType();
-	InternalFormat internal_format = images[0]->GetRecommendedFormat();
-	TextureCubeMapData::sptr result = std::make_shared<TextureCubeMapData>(size, format, type, nullptr,
-		internal_format);
-	for (int ix = 0; ix < 6; ix++) {
-		result->LoadFaceData(images[ix], (CubeMapFace)ix);
-	}
-	return result;
+	return nullptr;
 }
 
 TextureCubeMapData::sptr TextureCubeMapData::LoadFromImages(const std::string& rootImagePath) {

@@ -34,9 +34,12 @@ void main() {
 	diffuse = diffuse / dist; // (dist*dist)
 
 	// Specular
-	vec3 viewDir = normalize(u_CamPos - inPos);
-	vec3 h = normalize(lightDir + viewDir);
-	float spec = pow(max(dot(N, h), 0.0), u_Shininess); // Shininess coefficient (can be a uniform)
+
+	// REPLACE THIS SECTION FOR BLINN-PHONG
+	vec3 camDir = normalize(u_CamPos - inPos);
+	vec3 reflectDir = reflect(-lightDir, N);
+	float spec = pow(max(dot(camDir, reflectDir), 0.0), u_Shininess); // Shininess coefficient (can be a uniform)
+	// END OF REPLACE SECTION
 
 	vec3 specular = u_SpecularLightStrength * spec * u_LightCol; // Can also use a specular color
 

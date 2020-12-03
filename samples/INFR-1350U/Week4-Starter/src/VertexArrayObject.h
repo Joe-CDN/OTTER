@@ -2,11 +2,11 @@
 #include <glad/glad.h>
 #include <cstdint>
 #include <vector>
-#include <memory>
-#include "IndexBuffer.h"
-#include "VertexBuffer.h"
 
 // We can declare the classes for IndexBuffer and VertexBuffer here, since we don't need their full definitions in the .h file
+
+class IndexBuffer;
+class VertexBuffer;
 
 /// <summary>
 /// This structure will represent the parameters passed to the glVertexAttribPointer commands
@@ -48,13 +48,6 @@ struct BufferAttribute
 class VertexArrayObject final
 {
 public:
-	typedef std::shared_ptr<VertexArrayObject> sptr;
-
-	static inline sptr Create() {
-		return std::make_shared<VertexArrayObject>();
-	}
-
-public:
 	// We'll disallow moving and copying, since we want to manually control when the destructor is called
 	// We'll use these classes via pointers
 	VertexArrayObject(const VertexArrayObject& other) = delete;
@@ -74,13 +67,13 @@ public:
 	/// Sets the index buffer for this VAO, note that for now, this will not delete the buffer when the VAO is deleted, more on that later
 	/// </summary>
 	/// <param name="ibo">The index buffer to bind to this VAO</param>
-	void SetIndexBuffer(const IndexBuffer::sptr& ibo);
+	void SetIndexBuffer(IndexBuffer* ibo);
 	/// <summary>
 	/// Adds a vertex buffer to this VAO, with the specified attributes
 	/// </summary>
 	/// <param name="buffer">The buffer to add (note, does not take ownership, you will still need to delete later)</param>
 	/// <param name="attributes">A list of vertex attributes that will be fed by this buffer</param>
-	void AddVertexBuffer(const VertexBuffer::sptr& buffer, const std::vector<BufferAttribute>& attributes);
+	void AddVertexBuffer(VertexBuffer* buffer, const std::vector<BufferAttribute>& attributes);
 
 	/// <summary>
 	/// Binds this VAO as the source of data for draw operations
@@ -100,12 +93,12 @@ protected:
 	// Helper structure to store a buffer and the attributes
 	struct VertexBufferBinding
 	{
-		VertexBuffer::sptr Buffer;
+		VertexBuffer* Buffer;
 		std::vector<BufferAttribute> Attributes;
 	};
 	
 	// The index buffer bound to this VAO
-	IndexBuffer::sptr _indexBuffer;
+	IndexBuffer* _indexBuffer;
 	// The vertex buffers bound to this VAO
 	std::vector<VertexBufferBinding> _vertexBuffers;
 

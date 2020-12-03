@@ -2,20 +2,12 @@
 #include "IBuffer.h"
 #include <cstdint>
 #include <stdexcept>
-#include <memory>
 
 /// <summary>
 /// The index buffer will store indices for rendering (uint8_t, uint16_t and uint32_t)
 /// </summary>
 class IndexBuffer : public IBuffer
 {
-public:
-	typedef std::shared_ptr<IndexBuffer> sptr;
-
-	static inline sptr Create(GLenum usage = GL_STATIC_DRAW) {
-		return std::make_shared<IndexBuffer>(usage);
-	}
-
 public:
 	/// <summary>
 	/// Creates a new index buffer, with the given usage. Data will still need to be uploaded before it can be used

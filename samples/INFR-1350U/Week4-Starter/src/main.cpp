@@ -65,7 +65,7 @@ bool initGLFW() {
 	}
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "Joseph Di Lisi 100590205", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback
@@ -109,13 +109,13 @@ int main() {
 	};
 
 	//VBO - Vertex buffer object
-	VertexBuffer::sptr posVbo = VertexBuffer::Create();
+	VertexBuffer* posVbo = new VertexBuffer();
 	posVbo->LoadData(points, 9);
 
-	VertexBuffer::sptr color_vbo = VertexBuffer::Create();
+	VertexBuffer* color_vbo = new VertexBuffer();
 	color_vbo->LoadData(colors, 9);
 
-	VertexArrayObject::sptr vao = VertexArrayObject::Create();
+	VertexArrayObject* vao = new VertexArrayObject();
 	vao->AddVertexBuffer(posVbo, {
 		BufferAttribute(0, 3, GL_FLOAT, false, 0, NULL)
 	});
@@ -128,49 +128,29 @@ int main() {
 		 0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,
 		 0.5f,  0.5f, 0.0f,  0.3f, 0.2f, 0.5f,
 	    -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f
-	};
-	static const float interleaved2[] = {
-		//     X      Y     Z       R     G    B
-			 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-			 0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-			-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f
+		 0.5f,  1.0f, 0.0f,  1.0f, 1.0f, 1.0f
 	};
 
-	VertexBuffer::sptr interleaved_vbo = VertexBuffer::Create();
+	VertexBuffer* interleaved_vbo = new VertexBuffer();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
-
-	VertexBuffer::sptr interleaved_vbo2 = VertexBuffer::Create();
-	interleaved_vbo2->LoadData(interleaved2, 6 * 4);
 
 	static const uint16_t indices[] = {
 		0, 1, 2,
 		1, 3, 2
 	};
-	IndexBuffer::sptr interleaved_ibo = IndexBuffer::Create();
+	IndexBuffer* interleaved_ibo = new IndexBuffer();
 	interleaved_ibo->LoadData(indices, 3 * 2);
 
-	IndexBuffer::sptr interleaved_ibo2 = IndexBuffer::Create();
-	interleaved_ibo2->LoadData(indices, 3 * 2);
-
 	size_t stride = sizeof(float) * 6;
-	VertexArrayObject::sptr vao2 = VertexArrayObject::Create();	
+	VertexArrayObject* vao2 = new VertexArrayObject();
 	vao2->AddVertexBuffer(interleaved_vbo, {
 		BufferAttribute(0, 3, GL_FLOAT, false, stride, 0),
 		BufferAttribute(1, 3, GL_FLOAT, false, stride, sizeof(float) * 3),
 	});
 	vao2->SetIndexBuffer(interleaved_ibo);
 
-	VertexArrayObject::sptr vao3 = VertexArrayObject::Create();
-	vao3->AddVertexBuffer(interleaved_vbo2, {
-		BufferAttribute(0, 3, GL_FLOAT, false, stride, 0),
-		BufferAttribute(1, 3, GL_FLOAT, false, stride, sizeof(float) * 3),
-		});
-	vao3->SetIndexBuffer(interleaved_ibo2);
-
 	// Load our shaders
-	Shader::sptr shader = Shader::Create();
+	Shader* shader = new Shader();
 	shader->LoadShaderPartFromFile("shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
 	shader->LoadShaderPartFromFile("shaders/frag_shader.glsl", GL_FRAGMENT_SHADER);
 	shader->Link();
@@ -180,17 +160,11 @@ int main() {
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	GLint xTransformLoc = glGetUniformLocation(shader->GetHandle(), "u_ModelViewProjection");
 	glm::mat4 transform = glm::mat4(1.0f);
-	glm::mat4 transform2 = glm::mat4(1.0f);
-	glm::mat4 transform3 = glm::mat4(1.0f);
-	glm::mat4 transform4 = glm::mat4(1.0f);
-
-	Camera::sptr camera = Camera::Create();
-	camera->SetPosition(glm::vec3(0, 1, -1));
-	camera->LookAt(glm::vec3(0.0f));
 
 	// Our high-precision timer
-	double lastFrame = glfwGetTime();	
+	double lastFrame = glfwGetTime();
 
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
@@ -200,34 +174,32 @@ int main() {
 		double thisFrame = glfwGetTime();
 		float dt = static_cast<float>(thisFrame - lastFrame);
 		transform = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
-		transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(dt))));
-		transform3 = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 1, 0));
-		transform4 = glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(dt)), 0.0f));
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader->Bind();
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform);
+		glProgramUniformMatrix4fv(shader->GetHandle(), xTransformLoc, 1, false, glm::value_ptr(transform));
 
 		vao->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		vao->UnBind();
 
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform2);
-
 		vao2->Bind();
 		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), interleaved_ibo->GetElementType(), nullptr);
-		vao2->UnBind();
-
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform3 * transform4);
-
-		vao3->Bind();
-		glDrawElements(GL_TRIANGLES, interleaved_ibo2->GetElementCount(), interleaved_ibo2->GetElementType(), nullptr);
+		vao->UnBind();
 
 		glfwSwapBuffers(window);
 	}
-		
+
+	delete shader;
+	delete vao;
+	delete vao2;
+	delete interleaved_vbo;
+	delete interleaved_ibo;
+	delete posVbo;
+	delete color_vbo;
+
 	// Clean up the toolkit logger so we don't leak memory
 	Logger::Uninitialize();
 	return 0;

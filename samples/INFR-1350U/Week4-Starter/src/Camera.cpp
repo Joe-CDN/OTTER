@@ -29,7 +29,7 @@ void Camera::SetForward(const glm::vec3& forward) {
 }
 
 void Camera::LookAt(const glm::vec3& point) {
-	_normal = -glm::normalize(_position - point);
+	_normal = glm::normalize(_position - point);
 	__CalculateView();
 }
 
@@ -54,22 +54,14 @@ void Camera::SetFovDegrees(float value) {
 
 const glm::mat4& Camera::GetViewProjection() const {
 	// TODO: implement
-	if (_isDirty) {
-		_viewProjection = _projection * _view;
-		_isDirty = false;
-	}
-	return _viewProjection;
+	return glm::mat4(1.0f);
 }
 
 void Camera::__CalculateProjection()
 {
 	// TODO: implement
-	_projection = glm::perspective(_fovRadians, _aspectRatio, _nearPlane, _farPlane);
-	_isDirty = true;
 }
 
 void Camera::__CalculateView() {
 	// TODO: implement
-	_view = glm::lookAt(_position, _position + _normal, _up);
-	_isDirty = true;
 }
